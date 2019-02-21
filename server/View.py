@@ -37,8 +37,11 @@ class View:
 				self.canvas.create_oval(player['x']-PLAYER_SIZE//2, player['y']-PLAYER_SIZE//2, player['x']+PLAYER_SIZE//2, player['y']+PLAYER_SIZE//2, tag=f'player{player["id"]}',fill=PLAYER_COLORS[player["id"]])
 
 	def bullet_update(self):
-		for b in self.data['bullets']:
-			self.canvas.create_oval(b.x-BULLET_SIZE//2, b.y-BULLET_SIZE//2, b.x+BULLET_SIZE//2, b.y+BULLET_SIZE//2 ,fill=BULLET_COLORS)
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していたら
+			if f'bullets{i}' in self.data:
+				for b in self.data[f'bullets{i}']:
+					self.canvas.create_oval(b['x']-BULLET_SIZE//2, b['y']-BULLET_SIZE//2, b['x']+BULLET_SIZE//2, b['y']+BULLET_SIZE//2 ,fill=BULLET_COLORS[b["id"]])
 
 
 if __name__ == '__main__' :

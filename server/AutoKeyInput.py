@@ -5,7 +5,7 @@ import random
 
 class AutoKeyInput:
 	# ウィンドウオブジェクトにキー入力のイベントを設定
-	def __init__(self, window):
+	def __init__(self, window, player_id):
 		self.window = window
 		self.keyList = [KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT]
 		self.pressStatus = {}
@@ -13,16 +13,14 @@ class AutoKeyInput:
 		self.mouseX = 0
 		self.mouseY = 0
 		self.moveTimer = 0
+		self.player_id = player_id
 
 		for key in self.keyList:
 			self.pressStatus[key] = False
 			self.pressTime[key] = 0
 
 
-	def mouse(self):
-			# マウスは常に他の敵の位置にする
-			self.mouseX = event.x
-			self.mouseY = event.y
+			
 
 	def auto(self):
 		# ショットキーは常に押しっぱなし
@@ -58,8 +56,15 @@ class AutoKeyInput:
 			self.moveTimer -= 1
 
 	# アップデート関数，メインループ内で呼び出し必須
-	def update(self):
+	def update(self, gamedata=None):
 		self.auto()
+		# マウスは常に他の敵の位置にする
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していて自分ではないなら
+			if f'player{i}' in gamedata and i != self.player_id :
+				player = gamedata[f'player{i}']
+				self.mouseX = player['x']
+				self.mouseY = player['y']
 		for key in self.keyList:
 			if self.pressStatus[key] == True: 
 				self.pressTime[key] += 1

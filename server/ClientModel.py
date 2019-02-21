@@ -68,15 +68,22 @@ class ClientModel:
 		self.x += PLAYER_VELOCITY * dx
 		self.y += PLAYER_VELOCITY * dy
 
+		# 壁を超えて反対側に来れるように調整
+		self.x = (self.x + FIELD_WIDTH) % FIELD_WIDTH
+		self.y = (self.y + FIELD_HEIGHT) % FIELD_HEIGHT
+
 		# 壁を超えて進めないように処理
-		if self.x > FIELD_WIDTH:
+'''		if self.x > FIELD_WIDTH:
 			self.x = FIELD_WIDTH
 		if self.x < 0:
 			self.x = 0
 		if self.y > FIELD_HEIGHT:
 			self.y = FIELD_HEIGHT
 		if self.y < 0:
-			self.y = 0
+			self.y = 0'''
+		
+
+
 
 if __name__ == '__main__' :
 	window = tk.Tk()

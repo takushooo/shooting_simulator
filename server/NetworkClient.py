@@ -105,12 +105,18 @@ class NetworkClient():
                 raw_data = pickle.loads(pickled_data)
                 # SendDataはとりあえず受信する
                 if raw_data['message'] == 'SendGameData':
-                    print(raw_data)
-                    player_data = raw_data['data']['player']
-                    self.gamedata[f'player{player_data[0]}'] = player_data
-                    # 自分の情報はselfdataにも格納しておく
-                    if player_data[0] == self.player_id:
-                        self.selfdata = player_data
+                    # プレイヤー情報が含まれているならば
+                    if 'player' in raw_data['data']:
+                        player_data = raw_data['data']['player']
+                        self.gamedata[f'player{player_data[0]}'] = player_data
+                        # 自分の情報はselfdataにも格納しておく
+                        if player_data[0] == self.player_id:
+                            self.selfdata = player_data
+                    # 弾丸情報が含まれているならば
+                    if 'bullets' in raw_data['data']:
+                        bullets_id = raw_data['data']['bullets_id']
+                        bullets_data = raw_data['data']['bullets']
+                        self.gamedata[f'bullets{bullets_id}'] = bullets_data
 
                 if raw_data['message'] == 'NewPlayerAttend':
                     print(raw_data)
@@ -119,7 +125,7 @@ class NetworkClient():
                     self.gamedata[f'player{player_data[0]}'] = player_data
                     # 自分の情報はselfdataにも格納しておく
                     if player_data[0] == self.player_id:
-                        self.selfdata = player_data
+                        self.selfdata = player_datas
 
 
             except ConnectionRefusedError:
