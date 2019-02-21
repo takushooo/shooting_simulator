@@ -5,7 +5,7 @@ import pickle
 
 # ゲーム参加の流れ
 # C -> S| RequestAttend: サーバーに参加要求
-# S -> C| ResponseAtteend [プレイヤーID]: サーバーからの応答，プレイヤーIDが付与される
+# S -> C| ResponseAtteend [宛先ID] [サーバーID(0)]: サーバーからの応答，プレイヤーIDが付与される
 
 # S -> C| SendClientData [プレイヤーID] [データ]
 # C -> S| SendServerData [プレイヤーID] [データ]
@@ -30,7 +30,7 @@ class NetworkClient():
             self.socket.connect((self.host, self.port))
             print('Connected')
             # クライアントからメッセージを送る
-            self.send_message(self.createData('RequestAttend'))
+            self.send_message(self.createData('RequestAttend', 0))
             while True:
                 try:
                     # クライアントから送信されたメッセージを 1024 バイトずつ受信
@@ -38,7 +38,7 @@ class NetworkClient():
                     raw_data = pickle.loads(pickled_data)
                     msg = raw_data['message']
                     if msg == 'ResponseAttend':
-                        self.player_id = int(raw_data['id'])
+                        self.player_id = int(raw_data['dst_id'])
                         print(f'Get PlayerID: {self.player_id}')
                         break
                 except ConnectionRefusedError:
@@ -60,16 +60,17 @@ class NetworkClient():
             print('Connecting request is rejected')
             # P2Pなら自分が基準器(ホスト)になる処理
 
-    def createData(self,msg='',id=0, data=None):
-        raw_data = {'message':msg, 'id':id, 'data':data}
+    def createData(self,msg='',dst_id=0, src_id=0, data=None):
+        raw_data = {'message':msg, 'dst_id':dst_id, 'src_id':src_id, 'data':data}
         return pickle.dumps(raw_data)
 
     # ゲーム情報をおくるための関数
     # GameMainで呼び出される
     def send_data(self,gamedata):
         msg = 'SendGameData'
-        id = self.player_id
-        pickled_data = self.createData(msg, id, gamedata)
+        dst_id = 0 # サーバー宛
+        src_id = self.player_id
+        pickled_data = self.createData(msg, dst_id, src_id, gamedata)
         self.send_message(pickled_data)
 
 

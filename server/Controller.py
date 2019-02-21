@@ -14,18 +14,22 @@ class Controller:
 		# ウィンドウを作成
 	    self.window = tk.Tk()
 	    self.window.resizable(width=False, height=False)
+	    self.window.title('Shooting Simulator - Jkawe')
+
+#	    self.autoButton = 
+
 	    # 描画領域を作成
 	    self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)
-	    self.nc = NetworkClient()
-	    player_id = self.nc.player_id
-
-#	    self.keyinput = KeyInput(self.window)
+	    #	    self.keyinput = KeyInput(self.window)
 	    self.keyinput = AutoKeyInput(self.window)
-	    self.cm = ClientModel(self.window, self.keyinput, 0, 200, 200)	    #canvasを渡すことに注意．詳しくはView.py
+	    self.nc = NetworkClient()
+	    tmp_player_id = self.nc.player_id
+	    self.cm = ClientModel(self.window, self.keyinput, tmp_player_id, 200, 200)
 	    self.bm = BulletManager(self.window)
 
 	    self.data = {}
 	    self.init_data()
+	    #canvasを渡すことに注意．詳しくはView.py
 	    self.view = View(self.canvas, self.data)
 
 	    # 最初の1回(update内で再帰的にupdateが呼ばれてループとなる)
@@ -34,6 +38,8 @@ class Controller:
 	    self.window.mainloop()
 
 	def init_data(self):
+#		self.data[f'Player{self.cm.id}'] = 
+#		player_data =  
 		self.data['id'] = self.cm.id # idは不変
 		self.data['x'] = self.cm.x
 		self.data['y'] = self.cm.y

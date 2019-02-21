@@ -11,7 +11,8 @@ KEY_LEFT = 'a'
 KEY_SHOT = 'space'
 
 PLAYER_SIZE = 20
-PLAYER_COLORS = ['red', 'green', 'white', 'orange']
+# IDゼロ版はサーバーなので空にしておく
+PLAYER_COLORS = ['', 'red', 'green', 'white', 'orange']
 BACKGROUND_COLOR = 'black'
 # 30 FPSを基本として1フレームあたりの速度を調整 
 PLAYER_VELOCITY = 8 * (BASE_FPS/FPS) 

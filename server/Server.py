@@ -13,6 +13,7 @@ class GameServer:
 		self.port = 50007
 		self.clients = []
 		self.player = 1 # 0はサーバー，1以降がクライアント
+		self.server_id = 0
 
 	def openServer(self):
 		# AF = IPv4 という意味
@@ -42,8 +43,8 @@ class GameServer:
 		conn.close()
 		self.clients.remove((conn,addr))
 
-	def createData(self,msg='',id=0, data=None):
-		raw_data = {'message':msg, 'id':id, 'data':data}
+	def createData(self,msg='',dst_id=0, src_id=0, data=None):
+		raw_data = {'message':msg, 'dst_id':dst_id, 'src_id':src_id, 'data':data}
 		return pickle.dumps(raw_data)
 
 	def handler(self, conn, addr):
@@ -62,22 +63,27 @@ class GameServer:
 				break
 			else:
 				raw_data = pickle.loads(pickled_data)
-				msg = raw_data['message']
-				if msg == 'RequestAttend':
-					response = self.createData('ResponseAttend', self.player)
-					conn.sendto(response,addr)
-					print(f'Send [ResponseAttend {self.player}]')
-					self.player += 1
-				if msg == 'SendGameData':
-					gamedata = raw_data['data']
-					print(f'id:{raw_data["id"]}, x:{gamedata[0]}, y:{gamedata[1]}')
+				# サーバー宛のメッセージなら
+				if raw_data['dst_id'] == 0:
+					msg = raw_data['message']
+					if msg == 'RequestAttend':
+						# 参加リクエストへの返答ではデータはなし
+						response = self.createData('ResponseAttend', self.player, self.server_id)
+						conn.sendto(response,addr)
+						print(f'Send [ResponseAttend {self.player}]')
+						# プレイヤーIDを1増やす
+						#これだと無限に増えていってしまうため，使っていないIDを使うよう変更して
+						self.player += 1
+					if msg == 'SendGameData':
+						gamedata = raw_data['data']
+						print(f'id:{raw_data["src_id"]}, x:{gamedata[0]}, y:{gamedata[1]}')
 
-					self.createData('ResponseAttend', self.player, )
-					for client in self.clients:
-					try:
-						client[0].sendto(data,client[1])
-					except ConnectionResetError:
-						break
+						self.createData('ResponseAttend', self.player, )
+#					for client in self.clients:
+#						try:
+#							client[0].sendto(data,client[1])
+#						except ConnectionResetError:
+#							break
 				#print('data : {}, addr: {}'.format(raw_data, addr))
 #				#クライアントにデータを返す(b -> byte でないといけない)
 #				for client in self.clients:
