@@ -29,7 +29,7 @@ class Controller:
 	    # data: Viewクラスとの通信を行う情報パイプ
 	    self.data = {}
 	    self.init_data()
-	    
+
 
 	    # ビューの生成
 	    self.view = View(self.window, self.data)
@@ -64,13 +64,13 @@ class Controller:
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していたら
 			if f'player{i}' in gamedata:
-				plalyer_data = gamedata[f'player{i}']
+				player_data = gamedata[f'player{i}']
 				self.data[f'player{i}'] = {}
-				self.data[f'player{i}']['id'] = plalyer_data[0]
-				self.data[f'player{i}']['x'] = plalyer_data[1]
-				self.data[f'player{i}']['y'] = plalyer_data[2]
-				self.data[f'player{i}']['point'] = plalyer_data[3]
-				self.data[f'player{i}']['state'] = plalyer_data[4]
+				self.data[f'player{i}']['id'] = player_data[0]
+				self.data[f'player{i}']['x'] = player_data[1]
+				self.data[f'player{i}']['y'] = player_data[2]
+				self.data[f'player{i}']['point'] = player_data[3]
+				self.data[f'player{i}']['state'] = player_data[4]
 		
 		for i in range(20):
 			# 弾丸も同様に設定
@@ -106,7 +106,7 @@ class Controller:
 		sendData['bullets'] = []
 		for b in self.bm.bulletList:
 			bullet = (b.x, b.y, b.v, b.radian)
-			sendData[f'bullets'].append(bullet)
+			sendData['bullets'].append(bullet)
 		self.nc.send_data(sendData)
 
 		# 1000/FPS ミリ秒間隔で再実行

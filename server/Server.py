@@ -6,14 +6,15 @@ from const import FPS, VIEW_FPS, FIELD_WIDTH, FIELD_HEIGHT
 import socket
 import threading
 import pickle
-
-class GameServer:
+from ServerModel import ServerModel
+class Server:
 	def __init__(self):
 		self.host = '127.0.0.1'
 		self.port = 50007
 		self.clients = []
 		self.player = 1 # 0はサーバー，1以降がクライアント
 		self.server_id = 0
+		self.model = ServerModel()
 
 	def openServer(self):
 		# AF = IPv4 という意味
@@ -95,9 +96,10 @@ class GameServer:
 						self.player += 1
 
 					if msg == 'SendGameData':
-						gamedata = raw_data['data']
-						print(gamedata)
-#						print(f'id:{gamedata[0]}, x:{gamedata[1]}, y:{gamedata[2]}')
+						modeldata = raw_data['data']
+						print(f'model{modeldata}')
+						gamedata =  self.model.update(modeldata)
+						print(f'game{gamedata}')
 
 						# 各クライアントに送信
 						# この前に当たり判定やらなんやら加え入れてデータを変更する
@@ -117,5 +119,5 @@ class GameServer:
 
 
 if __name__ == '__main__' :
-	server = GameServer()
+	server = Server()
 	server.openServer()
