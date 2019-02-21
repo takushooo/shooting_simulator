@@ -14,7 +14,11 @@ class View:
 		# oval(x1,y1,x2,y2) x1y1からx2y2の長方形内に収まる円を描く
 		# プログラム内では円の中心に座標点を置くので微修正する
 
-		self.canvas.create_oval(self.data['x']-PLAYER_SIZE//2, self.data['y']-PLAYER_SIZE//2, self.data['x']+PLAYER_SIZE//2, self.data['y']+PLAYER_SIZE//2, tag=f'player{self.data["id"]}',fill=PLAYER_COLORS[self.data["id"]])
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していたら
+			if f'player{i}' in self.data:
+				player = self.data[f'player{i}']
+				self.canvas.create_oval(player['x']-PLAYER_SIZE//2, player['y']-PLAYER_SIZE//2, player['x']+PLAYER_SIZE//2, player['y']+PLAYER_SIZE//2, tag=f'player{player["id"]}',fill=PLAYER_COLORS[player["id"]])
 
 
 	def update(self):
@@ -26,7 +30,11 @@ class View:
 		self.bullet_update()
 
 	def player_update(self):
-		self.canvas.create_oval(self.data['x']-PLAYER_SIZE//2, self.data['y']-PLAYER_SIZE//2, self.data['x']+PLAYER_SIZE//2, self.data['y']+PLAYER_SIZE//2, tag=f'player{self.data["id"]}',fill=PLAYER_COLORS[self.data["id"]])
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していたら
+			if f'player{i}' in self.data:
+				player = self.data[f'player{i}']
+				self.canvas.create_oval(player['x']-PLAYER_SIZE//2, player['y']-PLAYER_SIZE//2, player['x']+PLAYER_SIZE//2, player['y']+PLAYER_SIZE//2, tag=f'player{player["id"]}',fill=PLAYER_COLORS[player["id"]])
 
 	def bullet_update(self):
 		for b in self.data['bullets']:

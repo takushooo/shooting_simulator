@@ -23,8 +23,10 @@ class Controller:
 	    #	    self.keyinput = KeyInput(self.window)
 	    self.keyinput = AutoKeyInput(self.window)
 	    self.nc = NetworkClient()
+	    print(self.nc.selfdata)
 	    tmp_player_id = self.nc.player_id
-	    self.cm = ClientModel(self.window, self.keyinput, tmp_player_id, 200, 200)
+	    # Neworkコントローラで設定された初期値を渡す(*でタプル展開)
+	    self.cm = ClientModel(self.window, self.keyinput, *(self.nc.selfdata))
 	    self.bm = BulletManager(self.window)
 
 	    self.data = {}
@@ -38,11 +40,12 @@ class Controller:
 	    self.window.mainloop()
 
 	def init_data(self):
-#		self.data[f'Player{self.cm.id}'] = 
-#		player_data =  
-		self.data['id'] = self.cm.id # idは不変
-		self.data['x'] = self.cm.x
-		self.data['y'] = self.cm.y
+		self.data[f'player{self.cm.id}'] = {}
+		self.data[f'player{self.cm.id}']['id'] = self.cm.id
+		self.data[f'player{self.cm.id}']['x'] = self.cm.x
+		self.data[f'player{self.cm.id}']['y'] = self.cm.y
+		self.data[f'player{self.cm.id}']['point'] = self.cm.point
+		self.data[f'player{self.cm.id}']['state'] = self.cm.state
 
 
 	def update_model(self):
@@ -51,13 +54,36 @@ class Controller:
 		self.cm.update()
 		self.bm.update()
 
-		# data辞書の更新
-		self.data['x'] = self.cm.x
-		self.data['y'] = self.cm.y
+		# ネットワークデータの更新
+		gamedata = self.nc.update()
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していたら
+			if f'player{i}' in gamedata:
+				plalyer_data = gamedata[f'player{i}']
+				self.data[f'player{i}'] = {}
+				self.data[f'player{i}']['id'] = plalyer_data[0]
+				self.data[f'player{i}']['x'] = plalyer_data[1]
+				self.data[f'player{i}']['y'] = plalyer_data[2]
+				self.data[f'player{i}']['point'] = plalyer_data[3]
+				self.data[f'player{i}']['state'] = plalyer_data[4]
+
+		# 自分の位置だけはクライアントのものを使って描画する
+		self.data[f'player{self.cm.id}'] = {}
+		self.data[f'player{self.cm.id}']['id'] = self.cm.id
+		self.data[f'player{self.cm.id}']['x'] = self.cm.x
+		self.data[f'player{self.cm.id}']['y'] = self.cm.y
+		self.data[f'player{self.cm.id}']['point'] = self.cm.point
+		self.data[f'player{self.cm.id}']['state'] = self.cm.state
+
+		# 弾の更新
 		self.data['bullets'] = self.bm.bulletList
 
-		data = (self.data['x'], self.data['y'])
-		self.nc.send_data(data)
+		
+		# ここを変更した場合，Serverの初期値設定の項目も変更すること
+		sendData = {}
+		sendData['player'] = (self.data[f'player{self.cm.id}']['id'], self.data[f'player{self.cm.id}']['x'], self.data[f'player{self.cm.id}']['y']
+			, self.data[f'player{self.cm.id}']['point'] , self.data[f'player{self.cm.id}']['state'])
+		self.nc.send_data(sendData)
 
 		# 1000/FPS ミリ秒間隔で再実行
 		self.window.after(int(1000//FPS), self.update_model)

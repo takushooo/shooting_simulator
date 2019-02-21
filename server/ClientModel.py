@@ -8,12 +8,15 @@ class ClientModel:
 	# プレイヤーの生成に必要な情報
 	# ID：プレイヤー固有のID，0から始まる．ホストやサーバーが決定する
 	# x,y：プレイヤーの初期位置
-	def __init__(self, window, keyinput, id, x, y):
+	def __init__(self, window, keyinput, id, x, y, point, state):
 		self.window = window
 		self.id = id
 		self.x = x
 		self.y = y
 		self.keyinput = keyinput
+		self.point = point  # 得点
+		self.state = state # 状態
+
 		self.cooltime = 0
 
 

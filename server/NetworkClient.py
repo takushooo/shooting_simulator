@@ -18,6 +18,8 @@ class NetworkClient():
         self.socket = ''
         self.number = 1
         self.player_id = 0
+        self.gamedata = {}
+        self.selfdata  = None
         self.socket_client_up()
 
 
@@ -36,11 +38,20 @@ class NetworkClient():
                     # クライアントから送信されたメッセージを 1024 バイトずつ受信
                     pickled_data = self.socket.recv(1024)
                     raw_data = pickle.loads(pickled_data)
-                    msg = raw_data['message']
-                    if msg == 'ResponseAttend':
+                    if raw_data['message'] == 'ResponseAttend':
                         self.player_id = int(raw_data['dst_id'])
                         print(f'Get PlayerID: {self.player_id}')
-                        break
+
+                    # 自分のプレイヤー情報をサーバーに初期化してもらう
+                    if raw_data['message'] == 'NewPlayerAttend':
+                        # (自分を含めて)新規参加がいたならば，プレイヤー情報を新規作成
+                        player_data = raw_data['data']['player']
+                        self.gamedata[f'player{player_data[0]}'] = player_data
+                        # 自分の情報はselfdataにも格納しておく
+                        if player_data[0] == self.player_id:
+                            self.selfdata = player_data
+                            break
+
                 except ConnectionRefusedError:
                     print('ConnectionRefusedError')
                     # 接続先のソケットサーバが立ち上がっていない場合、
@@ -83,6 +94,8 @@ class NetworkClient():
             # 接続拒否になることが多い
 #        except ConnectionResetError:
 
+    def update(self):
+        return self.gamedata
 
     def handler(self):
         while True:
@@ -90,8 +103,25 @@ class NetworkClient():
                 # クライアントから送信されたメッセージを 1024 バイトずつ受信
                 pickled_data = self.socket.recv(1024)
                 raw_data = pickle.loads(pickled_data)
-                print(raw_data)
-                print(self.player_id)
+                # SendDataはとりあえず受信する
+                if raw_data['message'] == 'SendGameData':
+                    print(raw_data)
+                    player_data = raw_data['data']['player']
+                    self.gamedata[f'player{player_data[0]}'] = player_data
+                    # 自分の情報はselfdataにも格納しておく
+                    if player_data[0] == self.player_id:
+                        self.selfdata = player_data
+
+                if raw_data['message'] == 'NewPlayerAttend':
+                    print(raw_data)
+                    # (自分を含めて)新規参加がいたならば，プレイヤー情報を新規作成
+                    player_data = raw_data['data']['player']
+                    self.gamedata[f'player{player_data[0]}'] = player_data
+                    # 自分の情報はselfdataにも格納しておく
+                    if player_data[0] == self.player_id:
+                        self.selfdata = player_data
+
+
             except ConnectionRefusedError:
                 # 接続先のソケットサーバが立ち上がっていない場合、
                 # 接続拒否になることが多い

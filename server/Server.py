@@ -68,22 +68,45 @@ class GameServer:
 					msg = raw_data['message']
 					if msg == 'RequestAttend':
 						# 参加リクエストへの返答ではデータはなし
-						response = self.createData('ResponseAttend', self.player, self.server_id)
-						conn.sendto(response,addr)
+						send_data = self.createData('ResponseAttend', self.player, self.server_id)
+						conn.sendto(send_data,addr)
 						print(f'Send [ResponseAttend {self.player}]')
+
+						# 新規プレイヤーに対して初期値をあたえて，全員に参加を知らせる
+						# このデータ形式はControllerの通信データ形式に沿ったもの
+						#
+						sendData = {}
+						player_id = self.player
+						x = 200
+						y = 200
+						point = 0
+						state = 1
+						sendData['player'] = (player_id, x, y, point, state)
+						send_data = self.createData('NewPlayerAttend', self.server_id, self.server_id, sendData)
+						# 新規プレイヤーの参加通知をブロードキャスト
+						for client in self.clients:
+							try:
+								client[0].sendto(send_data,client[1])
+							except ConnectionResetError:
+								break
+
 						# プレイヤーIDを1増やす
 						#これだと無限に増えていってしまうため，使っていないIDを使うよう変更して
 						self.player += 1
+
 					if msg == 'SendGameData':
 						gamedata = raw_data['data']
-						print(f'id:{raw_data["src_id"]}, x:{gamedata[0]}, y:{gamedata[1]}')
+						print(gamedata)
+#						print(f'id:{gamedata[0]}, x:{gamedata[1]}, y:{gamedata[2]}')
 
-						self.createData('ResponseAttend', self.player, )
-#					for client in self.clients:
-#						try:
-#							client[0].sendto(data,client[1])
-#						except ConnectionResetError:
-#							break
+						# 各クライアントに送信
+						# この前に当たり判定やらなんやら加え入れてデータを変更する
+						send_data = self.createData('SendGameData', self.server_id, self.server_id, gamedata)
+						for client in self.clients:
+							try:
+								client[0].sendto(send_data,client[1])
+							except ConnectionResetError:
+								break
 				#print('data : {}, addr: {}'.format(raw_data, addr))
 #				#クライアントにデータを返す(b -> byte でないといけない)
 #				for client in self.clients:
