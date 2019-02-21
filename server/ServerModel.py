@@ -49,7 +49,7 @@ class ServerModel:
 	def dump_data(self,data):
 		player_id = data['bullets_id']
 		dump_data = {}
-		dump_data['players'] = (self.players[f'player{player_id}']['id'], self.players[f'player{player_id}']['x'], self.players[f'player{player_id}']['y'], 
+		dump_data['player'] = (self.players[f'player{player_id}']['id'], self.players[f'player{player_id}']['x'], self.players[f'player{player_id}']['y'], 
 			self.players[f'player{player_id}']['point'], self.players[f'player{player_id}']['state'])
 
 		dump_data['bullets_id'] = player_id
@@ -63,11 +63,13 @@ class ServerModel:
 	# 全てのプレイヤー，弾の組み合わせについて衝突判定
 	def checkCollision(self):
 		for player in self.players.values():
+			#print(player)
 			for bullet in self.bullets[:]: #[:]することでforループの中でremoveできる
 				# 自分で撃った弾にはあたらない
 				if player['id'] != bullet['id']:
 					if self.checkBalletPlayerCollision(player, bullet):
 						# 衝突処理
+						#print(f'Player{player["id"]} is damaged...')
 						player['point'] += BULLET_POINT
 						self.bullets.remove(bullet)
 						continue
@@ -76,6 +78,7 @@ class ServerModel:
 	# 弾のワープに対応するため，1ピクセルづつ動かして検証する（もっと頭いい方法あるはず）
 	def checkBalletPlayerCollision(self, player, bullet):
 		for i in range(int(bullet['v'])):
+			#print(bullet['radian'])
 			tmpx = bullet['x']+ math.cos(bullet['radian']) * i
 			tmpy = bullet['y']+ math.sin(bullet['radian']) * i
 			dist = math.sqrt(math.pow(player['x'] - tmpx, 2) + math.pow(player['y'] - tmpy, 2))

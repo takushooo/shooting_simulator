@@ -94,6 +94,7 @@ class NetworkClient():
 #        except ConnectionResetError:
 
     def update(self):
+        #print(self.gamedata)
         return self.gamedata
 
     def handler(self):
@@ -104,6 +105,7 @@ class NetworkClient():
                 raw_data = pickle.loads(pickled_data)
                 # SendDataはとりあえず受信する
                 if raw_data['message'] == 'SendGameData':
+                    #print(raw_data['data'])
                     # プレイヤー情報が含まれているならば
                     if 'player' in raw_data['data']:
                         player_data = raw_data['data']['player']
@@ -118,7 +120,7 @@ class NetworkClient():
                         self.gamedata[f'bullets{bullets_id}'] = bullets_data
 
                 if raw_data['message'] == 'NewPlayerAttend':
-                    print(raw_data)
+                    print(f'Charenger appeared!   {raw_data}')
                     # (自分を含めて)新規参加がいたならば，プレイヤー情報を新規作成
                     player_data = raw_data['data']['player']
                     self.gamedata[f'player{player_data[0]}'] = player_data

@@ -83,12 +83,12 @@ class Controller:
 
 
 		# 自分の位置だけはクライアントのものを使って描画する
-		self.data[f'player{self.cm.id}'] = {}
-		self.data[f'player{self.cm.id}']['id'] = self.cm.id
+		#self.data[f'player{self.cm.id}'] = {}
+		#self.data[f'player{self.cm.id}']['id'] = self.cm.id
 		self.data[f'player{self.cm.id}']['x'] = self.cm.x
 		self.data[f'player{self.cm.id}']['y'] = self.cm.y
-		self.data[f'player{self.cm.id}']['point'] = self.cm.point
-		self.data[f'player{self.cm.id}']['state'] = self.cm.state
+		#self.data[f'player{self.cm.id}']['point'] = self.cm.point
+		#self.data[f'player{self.cm.id}']['state'] = self.cm.state
 
 		# 弾も同様に自分のものはクライアントの情報を使って描画する
 		self.data[f'bullets{self.cm.id}'] = []

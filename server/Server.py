@@ -1,12 +1,12 @@
 import tkinter as tk
 import math
-from ClientModel import ClientModel
-from BulletManager import BulletManager
 from const import FPS, VIEW_FPS, FIELD_WIDTH, FIELD_HEIGHT
 import socket
 import threading
 import pickle
 from ServerModel import ServerModel
+from ServerView import ServerView
+
 class Server:
 	def __init__(self):
 		self.host = '127.0.0.1'
@@ -15,6 +15,13 @@ class Server:
 		self.player = 1 # 0はサーバー，1以降がクライアント
 		self.server_id = 0
 		self.model = ServerModel()
+		# ウィンドウを作成
+#		self.window = tk.Tk()
+#		self.view = ServerView(self.window,self.model.players, self.model.bullets)
+#	
+#		thread = threading.Thread(target=self.update, daemon=True)
+#		thread.start()
+#		self.window.mainloop()
 
 	def openServer(self):
 		# AF = IPv4 という意味
@@ -47,6 +54,11 @@ class Server:
 	def createData(self,msg='',dst_id=0, src_id=0, data=None):
 		raw_data = {'message':msg, 'dst_id':dst_id, 'src_id':src_id, 'data':data}
 		return pickle.dumps(raw_data)
+
+	def update(self):
+		self.view.update()
+		# 1000/FPS_VIEW ミリ秒間隔で再実行
+		self.window.after(int(1000//VIEW_FPS), self.update)
 
 	def handler(self, conn, addr):
 		while True:
@@ -97,9 +109,8 @@ class Server:
 
 					if msg == 'SendGameData':
 						modeldata = raw_data['data']
-						print(f'model{modeldata}')
 						gamedata =  self.model.update(modeldata)
-						print(f'game{gamedata}')
+						#print(f'game{gamedata}')
 
 						# 各クライアントに送信
 						# この前に当たり判定やらなんやら加え入れてデータを変更する
