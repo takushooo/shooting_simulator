@@ -6,9 +6,8 @@ import pickle
 # ゲーム参加の流れ
 # C -> S| RequestAttend: サーバーに参加要求
 # S -> C| ResponseAtteend [宛先ID] [サーバーID(0)]: サーバーからの応答，プレイヤーIDが付与される
-
-# S -> C| SendClientData [プレイヤーID] [データ]
-# C -> S| SendServerData [プレイヤーID] [データ]
+# S -> C| SendGameData [プレイヤーID] [データ]
+# C -> S| SendGameData [プレイヤーID] [データ]
 
 
 class NetworkClient():

@@ -12,19 +12,19 @@ KEY_SHOT = 'space'
 
 PLAYER_SIZE = 20
 # IDゼロ版はサーバーなので空にしておく
-PLAYER_COLORS = ['', 'red', 'green', 'white', 'orange', 'red', 'green', 'white', 'orange']
+PLAYER_COLORS = ['', 'red', 'cyan', 'lawn green', 'white',  'orange', 'coral', 'gold', 'thistle', 'azure', 'light grey']
 BACKGROUND_COLOR = 'black'
 # 30 FPSを基本として1フレームあたりの速度を調整 
 PLAYER_VELOCITY = 8 * (BASE_FPS/FPS) 
 # ショットの間隔フレーム = FPS/1秒あたりのショットの連射数
 SHOOT_COOLTIME = (FPS/5)  
-BULLET_VELOCITY = 10
+BULLET_VELOCITY = 12 * (BASE_FPS/FPS) 
 BULLET_POINT = 1
 BULLET_SIZE = 6
-BULLET_COLORS = ['', 'red', 'green', 'white', 'orange', 'red', 'green', 'white', 'orange']
-
-#WIDTH = 200
-#HEIGHT = 200
+BULLET_COLORS = ['', 'red', 'cyan', 'lawn green', 'white',  'orange', 'coral', 'gold', 'thistle', 'azure', 'light grey']
 
 #CPUの移動フレーム頻度(平均n秒に1回) 30FPS基準
 CPU_MOVE = FPS * 0.5
+
+#リストボックスの高さはFIELD_HEIGHTと同じ
+LISTBOX_WIDTH = 150

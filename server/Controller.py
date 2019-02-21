@@ -14,32 +14,29 @@ class Controller:
 	def __init__(self, flag) :
 		# ウィンドウを作成
 	    self.window = tk.Tk()
-	    self.window.resizable(width=False, height=False)
-	    self.window.title('Shooting Simulator - Jkawe')
 
-#	    self.autoButton = 
-
-	    # 描画領域を作成
-	    self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)
+	    # モデルインスタンス
 	    self.nc = NetworkClient()
 	    print(self.nc.selfdata)
 	    tmp_player_id = self.nc.player_id
-
 	    if flag == True :
 	    	self.keyinput = KeyInput(self.window)
 	    else:
 	    	self.keyinput = AutoKeyInput(self.window, tmp_player_id)
-	    
 	    # Neworkコントローラで設定された初期値を渡す(*でタプル展開)
 	    self.cm = ClientModel(self.window, self.keyinput, *(self.nc.selfdata))
 	    self.bm = BulletManager(self.window)
-
+	    # data: Viewクラスとの通信を行う情報パイプ
 	    self.data = {}
 	    self.init_data()
-	    #canvasを渡すことに注意．詳しくはView.py
-	    self.view = View(self.canvas, self.data)
+	    
+
+	    # ビューの生成
+	    self.view = View(self.window, self.data)
+
 
 	    # 最初の1回(update内で再帰的にupdateが呼ばれてループとなる)
+	    # モデルとビューは更新頻度(TickRate, FPS)が異なるので別々に呼ぶ
 	    self.update_model()
 	    self.update_view()
 	    self.window.mainloop()

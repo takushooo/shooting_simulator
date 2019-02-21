@@ -1,14 +1,23 @@
 import tkinter as tk
-from const import FIELD_HEIGHT, FIELD_WIDTH, PLAYER_SIZE, PLAYER_COLORS, BACKGROUND_COLOR, BULLET_SIZE, BULLET_COLORS
+from const import FIELD_HEIGHT, FIELD_WIDTH, PLAYER_SIZE, PLAYER_COLORS, BACKGROUND_COLOR, BULLET_SIZE, BULLET_COLORS, LISTBOX_WIDTH
 
 class View:
-	def __init__(self, canvas, data):
-		# 描画しかしないのでcanvasだけでよい
-		# windowオブジェクトはイベントの割り当てなどに必要だが描画クラスでは使わない
-		self.canvas = canvas
+	def __init__(self, window, data):
+		# ウィンドウの設定
+		self.window = window
+		self.window.resizable(width=False, height=False)
+		self.window.title('Shooting Simulator - Jkawe')
+		self.window.geometry(f'{FIELD_WIDTH + LISTBOX_WIDTH}x{FIELD_HEIGHT}')
+		# 描画領域を作成
+		self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)
 		self.canvas.create_rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT, fill=BACKGROUND_COLOR)
-		self.canvas.pack()
+		self.canvas.pack(side=tk.LEFT)
 		self.data = data
+
+		self.player_log = tk.StringVar()
+		self.message = tk.Message(self.window,textvariable=self.player_log, anchor=tk.N ,width=LISTBOX_WIDTH, justify=tk.LEFT)
+		self.player_log.set("Name ID\t\tDamage")
+		self.message.pack(side=tk.LEFT) #左から詰めるオプション
 
 		# プレイヤーの描写
 		# oval(x1,y1,x2,y2) x1y1からx2y2の長方形内に収まる円を描く
@@ -28,6 +37,7 @@ class View:
 #		self.canvas.delete(f'player{self.data["id"]}')
 		self.player_update()
 		self.bullet_update()
+		self.message_update()
 
 	def player_update(self):
 		for i in range(20):
@@ -43,6 +53,15 @@ class View:
 				for b in self.data[f'bullets{i}']:
 					self.canvas.create_oval(b['x']-BULLET_SIZE//2, b['y']-BULLET_SIZE//2, b['x']+BULLET_SIZE//2, b['y']+BULLET_SIZE//2 ,fill=BULLET_COLORS[b["id"]])
 
+	def message_update(self):
+		textlist = ["Name\t  Damage"]
+		for i in range(20):
+			# gamedataのキーにplayer{i}が存在していたら
+			if f'player{i}' in self.data:
+				player = self.data[f'player{i}']
+				textlist.append(f'Player {player["id"]}\t  {player["point"]}')
+
+		self.player_log.set('\n'.join(textlist))
 
 if __name__ == '__main__' :
     print('test')
