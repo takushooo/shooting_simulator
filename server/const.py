@@ -1,3 +1,5 @@
+# coding:utf-8
+
 BASE_FPS = 30
 FPS = 20
 VIEW_FPS = 144

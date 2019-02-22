@@ -1,3 +1,5 @@
+# coding:utf-8
+
 from Controller import Controller
 import argparse
 
@@ -27,7 +29,7 @@ if __name__ == '__main__' :
 	else:
 		config['downlinkdelay'] = 0.0
 	if args.ip :
-		config['ip'] = str(ip)
+		config['ip'] = str(args.ip)
 	else:
 		config['ip'] = 'localhost'
 

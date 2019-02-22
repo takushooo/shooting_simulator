@@ -1,5 +1,7 @@
+# coding:utf-8
+
 import tkinter as tk
-import math
+import math	
 from const import FPS, VIEW_FPS, FIELD_WIDTH, FIELD_HEIGHT
 import socket
 import threading

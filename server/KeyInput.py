@@ -1,3 +1,5 @@
+# coding:utf-8
+
 import tkinter as tk
 from const import KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT
 

@@ -1,3 +1,5 @@
+# coding:utf-8
+
 from const import BULLET_SIZE, BULLET_VELOCITY, BULLET_POINT, BULLET_COLORS, FIELD_WIDTH, FIELD_HEIGHT
 import math
 from Bullet import Bullet
