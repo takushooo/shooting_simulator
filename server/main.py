@@ -10,6 +10,7 @@ if __name__ == '__main__' :
 	p.add_argument('-m', '--manual',default=False,action='store_true',help='Change control mode manual')
 	p.add_argument('-ud','--uplinkdelay',help='Uplink delay: Set uplink delay [ms]')
 	p.add_argument('-dd','--downlinkdelay',help='Downlink delay: Set downlink delay [ms]')
+	p.add_argument('-ip',help='IP address')
 
 	config = {} #設定データは辞書で保持
 	args = p.parse_args()
@@ -25,5 +26,9 @@ if __name__ == '__main__' :
 		config['downlinkdelay'] = float(args.downlinkdelay)
 	else:
 		config['downlinkdelay'] = 0.0
+	if args.ip :
+		config['ip'] = str(ip)
+	else:
+		config['ip'] = 'localhost'
 
 	geme = Controller(config)
