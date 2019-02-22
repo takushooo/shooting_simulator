@@ -3,6 +3,7 @@
 import tkinter as tk
 from const import KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT, CPU_MOVE
 import random
+import math
 # 使い方
 
 class AutoKeyInput:
@@ -60,18 +61,28 @@ class AutoKeyInput:
 	# アップデート関数，メインループ内で呼び出し必須
 	def update(self, gamedata=None):
 		self.auto()
-		# マウスは常に他の敵の位置にする
+		
+		# マウスはもっとも近い敵の座標にする
+		dist = {}
+		# 自分以外のプレイヤーとの距離を計算してリスト化
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していて自分ではないなら
 			if f'player{i}' in gamedata and i != self.player_id :
 				player = gamedata[f'player{i}']
-				self.mouseX = player['x']
-				self.mouseY = player['y']
+				tmp_dist = math.sqrt(math.pow((player['x'] - gamedata[f'player{self.player_id}']['x']),2)+math.pow((player['y'] - gamedata[f'player{self.player_id}']['y']),2))
+				dist[f'player{i}'] = tmp_dist
+		# もっとも近い敵をマウス座標とする
+		if len(dist) > 0:
+			key = max(dist.items(), key=lambda x:x[1])[0]
+			self.mouseX = gamedata[key]['x']
+			self.mouseY = gamedata[key]['y']
+
 		for key in self.keyList:
 			if self.pressStatus[key] == True: 
 				self.pressTime[key] += 1
 			else:
 				self.pressTime[key] = 0
+
 
 
 if __name__ == '__main__' :

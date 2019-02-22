@@ -11,6 +11,7 @@ from ServerView import ServerView
 from time import sleep
 import argparse
 
+
 class Server:
 	def __init__(self):
 		self.host = '0.0.0.0'
@@ -59,7 +60,7 @@ class Server:
 		while True:
 			try:
 				# クライアントからデータを受け取る
-				pickled_data = conn.recv(1024)
+				pickled_data = conn.recv(4024)
 			except ConnectionRasetError:
 				# クライアント側でプログラムを強制終了させた場合
 				self.closeServer(conn,addr)
@@ -109,7 +110,6 @@ class Server:
 						#print(f'game{gamedata}')
 
 						# 各クライアントに送信
-						# この前に当たり判定やらなんやら加え入れてデータを変更する
 						send_data = self.createData('SendGameData', self.server_id, self.server_id, gamedata)
 						for client in self.clients:
 							try:

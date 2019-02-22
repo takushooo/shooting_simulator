@@ -64,6 +64,9 @@ class Controller:
 		for b in self.bm.bulletList:
 			bullet = (b.x, b.y, b.v, b.radian)
 			sendData['bullets'].append(bullet)
+
+		
+
 		return sendData
 
 

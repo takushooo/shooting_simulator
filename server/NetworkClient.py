@@ -4,6 +4,7 @@ import socket
 import threading
 import random
 import pickle
+import numpy as np
 
 # ゲーム参加の流れ
 # C -> S| RequestAttend: サーバーに参加要求
@@ -83,27 +84,38 @@ class NetworkClient():
         dst_id = 0 # サーバー宛
         src_id = self.player_id
         pickled_data = self.createData(msg, dst_id, src_id, gamedata)
-        self.send_message(pickled_data)
-
-
-    def send_message(self,pickled_data):
-#        try:
-            # メッセージ送信
         self.socket.send(pickled_data)
-#        except ConnectionRefusedError:
-            # 接続先のソケットサーバが立ち上がっていない場合、
-            # 接続拒否になることが多い
-#        except ConnectionResetError:
+        # 送信データが1000バイト超えるならば分割して送信
+        '''
+        if len(pickled_data) > 1000: 
+            print('-----Divide-----')
+            print(gamedata)
+            div_num = len(pickled_data)//1000 + 1
+            div_bullets = np.array_split(gamedata['bullets'],div_num)
+            for div in div_bullets:
+                sendData = gamedata.copy()
+                sendData['bullets'] = div
+                pickled_data = self.createData(msg, dst_id, src_id, data)
+                self.socket.send(pickled_data)
+        else:
+            self.socket.send(pickled_data)
+        '''
+
+        
+    def send_message(self, data):
+        self.socket.send(data)
+
 
     def update(self):
         #print(self.gamedata)
         return self.gamedata
 
+
     def handler(self):
         while True:
             try:
                 # クライアントから送信されたメッセージを 1024 バイトずつ受信
-                pickled_data = self.socket.recv(1024)
+                pickled_data = self.socket.recv(4024)
                 raw_data = pickle.loads(pickled_data)
                 # SendDataはとりあえず受信する
                 if raw_data['message'] == 'SendGameData':

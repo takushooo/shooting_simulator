@@ -80,7 +80,7 @@ class ServerModel:
 					if self.checkBalletPlayerCollision(player, bullet):
 						# 衝突処理
 						player['point'] += BULLET_POINT
-						print(f'Player {player["id"]} is {player["point"]} damaged')
+#						print(f'Player {player["id"]} is {player["point"]} damaged')
 						# スレッドで実行しているのでなくなることがある
 						# なくしたい
 						if bullet in self.bullets:
