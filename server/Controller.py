@@ -69,7 +69,7 @@ class Controller:
 		self.nc.send_data(sendData)
 
 
-	def set_modelData(self, receiveData):
+	def set_recievedlData(self, receiveData):
 		gamedata = receiveData
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していたら
@@ -90,34 +90,7 @@ class Controller:
 					bullet = {'id': i, 'x': b[0],'y': b[1], 'v': b[2], 'radian': b[3]}
 					self.data[f'bullets{i}'].append(bullet)
 
-
-	def update_model(self):
-		# アップデート順番は大事
-		self.keyinput.update(self.data)
-		self.cm.update()
-		self.bm.update()
-
-		# モデルデータの更新
-		# ここで扱っているのは描画に必要な情報のみ
-		# 内部モデルClientModel(cm)には触れない
-		recieveData = self.nc.update().copy() #帰り値が辞書型なのでコピーをとっておく
-		# ネットワークの下り遅延 ミリ秒指定
-		if self.config['downlinkdelay'] > 0:
-			timer = Timer(self.config['downlinkdelay']/1000, self.set_modelData, (recieveData, ))
-			timer.start()
-		else:
-			self.set_modelData(recieveData)
-
-		# ネットワークの上り遅延 ミリ秒指定
-		sendData = self.create_packet()
-		if self.config['uplinkdelay'] > 0:
-			timer = Timer(self.config['uplinkdelay']/1000, self.set_sendData, (sendData, ))
-			timer.start()
-		else:
-			self.set_sendData(sendData)
-
-
-		self.cm.point = self.data[f'player{self.cm.id}']['point']
+				self.cm.point = self.data[f'player{self.cm.id}']['point']
 		# 自分の位置だけはクライアントのものを使って描画する
 		#self.data[f'player{self.cm.id}'] = {}
 		#self.data[f'player{self.cm.id}']['id'] = self.cm.id
@@ -131,6 +104,32 @@ class Controller:
 		for b in self.bm.bulletList:
 			bullet = {'id': self.cm.id, 'x':b.x ,'y': b.y, 'v': b.v, 'radian': b.radian}
 			self.data[f'bullets{self.cm.id}'].append(bullet)
+
+
+	def update_model(self):
+		# アップデート順番は大事
+		self.keyinput.update(self.data)
+		self.cm.update()
+		self.bm.update()
+
+		# モデルデータの更新
+		# ここで扱っているのは描画に必要な情報のみ
+		# 内部モデルClientModel(cm)には触れない
+		recieveData = self.nc.update().copy() #帰り値が辞書型なのでコピーをとっておく
+		# ネットワークの下り遅延 ミリ秒指定
+		if self.config['downlinkdelay'] > 0:
+			timer = Timer(self.config['downlinkdelay']/1000, self.set_recievedlData, (recieveData, ))
+			timer.start()
+		else:
+			self.set_recievedlData(recieveData)
+
+		# ネットワークの上り遅延 ミリ秒指定
+		sendData = self.create_packet()
+		if self.config['uplinkdelay'] > 0:
+			timer = Timer(self.config['uplinkdelay']/1000, self.set_sendData, (sendData, ))
+			timer.start()
+		else:
+			self.set_sendData(sendData)
 		
 
 		# 1000/FPS ミリ秒間隔で再実行
