@@ -1,8 +1,8 @@
 BASE_FPS = 30
 FPS = 20
 VIEW_FPS = 144
-FIELD_HEIGHT = 400
-FIELD_WIDTH = 400
+FIELD_HEIGHT = 300
+FIELD_WIDTH = 300
 
 KEY_UP = 'w'
 KEY_DOWN = 's'
@@ -15,10 +15,10 @@ PLAYER_SIZE = 20
 PLAYER_COLORS = ['', 'red', 'cyan', 'lawn green', 'white',  'orange', 'coral', 'gold', 'thistle', 'azure', 'light grey']
 BACKGROUND_COLOR = 'black'
 # 30 FPSを基本として1フレームあたりの速度を調整 
-PLAYER_VELOCITY = 8 * (BASE_FPS/FPS) 
+PLAYER_VELOCITY = 10 * (BASE_FPS/FPS) 
 # ショットの間隔フレーム = FPS/1秒あたりのショットの連射数
 SHOOT_COOLTIME = (FPS/5)  
-BULLET_VELOCITY = 12 * (BASE_FPS/FPS) 
+BULLET_VELOCITY = 3 * (BASE_FPS/FPS) 
 BULLET_POINT = 1
 BULLET_SIZE = 6
 BULLET_COLORS = ['', 'red', 'cyan', 'lawn green', 'white',  'orange', 'coral', 'gold', 'thistle', 'azure', 'light grey']

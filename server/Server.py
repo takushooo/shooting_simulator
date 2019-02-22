@@ -7,10 +7,10 @@ import pickle
 from ServerModel import ServerModel
 from ServerView import ServerView
 from time import sleep
+import argparse
 
 class Server:
-	def __init__(self, window):
-		self.window = window
+	def __init__(self):
 		self.host = '127.0.0.1'
 		self.port = 50007
 		self.clients = []
@@ -124,29 +124,42 @@ class Server:
 
 
 if __name__ == '__main__' :
+	##############################
+	#Read ArgOption
+	#Override config setting in INI File
+	##############################
+	p = argparse.ArgumentParser()
+	p.add_argument('-v', '--view',default=False,action='store_true',help='ser GUI option')
 
-	# ウィンドウを作成
-	window = tk.Tk()
-	server = Server(window)
+	config = {} #設定データは辞書で保持
+	args = p.parse_args()
+	if args.view :
+		config['view'] = args.view
+	else:
+		config['view'] = False
 
+	server = Server()
 	thread = threading.Thread(target=server.openServer, daemon=False)
 	thread.start()
 
-	view = ServerView(window, server.model.players, server.model.bullets)
-	# 1000/FPS_VIEW ミリ秒間隔で再実行
+	if config['view']:
+		# ウィンドウを作成
+		window = tk.Tk()
+		view = ServerView(window, server.model.players, server.model.bullets)
+	
 	def update():
 		server.update()
 		view.update()
+		# 1000/FPS_VIEW ミリ秒間隔で再実行
 		window.after(int(1000//VIEW_FPS), update)
 
-	update()
-	window.mainloop()
-
-
-#	sleep_time = 1/600
-#	while True:
-#		server.update()
-#		sleep(sleep_time)
-
-
+	if config['view']:
+		update()
+		window.mainloop()
+	else:
+		# sleepは秒単位
+		sleep_time = 1/60
+		while True:
+			server.update()
+			sleep(sleep_time)
 

@@ -79,8 +79,11 @@ class ServerModel:
 						# 衝突処理
 						player['point'] += BULLET_POINT
 						print(f'Player {player["id"]} is {player["point"]} damaged')
-						self.bullets.remove(bullet)
-						continue
+						# スレッドで実行しているのでなくなることがある
+						# なくしたい
+						if bullet in self.bullets:
+							self.bullets.remove(bullet)
+							continue
 
 	# ある弾とあるプレイヤーが次１ステップのうちに衝突するかどうか
 	# 弾のワープに対応するため，1ピクセルづつ動かして検証する（もっと頭いい方法あるはず）
