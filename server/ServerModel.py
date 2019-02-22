@@ -13,10 +13,10 @@ class ServerModel:
 		self.bullets = []
 
 
-	def update(self, gamedata):
-		self.load_data(gamedata)
-		self.checkCollision()
-		return self.dump_data(gamedata)
+#	def update(self, gamedata):
+#		self.load_data(gamedata)
+#		self.checkCollision()
+#		return self.dump_data(gamedata)
 
 
 	# raw_dataを打ち込むとモデルに格納する関数
@@ -26,13 +26,23 @@ class ServerModel:
 		player_id = data['bullets_id']
 
 		# IDがリストになければ新規登録プレイヤー
-		#if f'player{player_id}' in self.players == False:
-		self.players[f'player{player_id}'] = {}
-		self.players[f'player{player_id}']['id'] = player_data[0]
-		self.players[f'player{player_id}']['x'] = player_data[1]
-		self.players[f'player{player_id}']['y'] = player_data[2]
-		self.players[f'player{player_id}']['point'] = player_data[3]
-		self.players[f'player{player_id}']['state'] = player_data[4]		
+		if f'player{player_id}' not in self.players.keys():
+			self.players[f'player{player_id}'] = {}
+			self.players[f'player{player_id}']['id'] = player_data[0]
+			self.players[f'player{player_id}']['x'] = player_data[1]
+			self.players[f'player{player_id}']['y'] = player_data[2]
+			self.players[f'player{player_id}']['point'] = player_data[3]
+			self.players[f'player{player_id}']['state'] = player_data[4]
+		else:
+			print(self.players)
+			self.players[f'player{player_id}']['id'] = player_data[0]
+			self.players[f'player{player_id}']['x'] = player_data[1]
+			self.players[f'player{player_id}']['y'] = player_data[2]
+			# pointとstateはサーバーのものを使用する
+			# 普通のゲームでも同様だと思う．(本当はx.yもキー入力情報から求めたいが．．．)
+
+
+				
 
 		# 弾は該当するIDの弾を全て消してから再設定する
 		# 弾はプレイやーと異なり，クライアント毎にラベルはつけない
@@ -63,14 +73,15 @@ class ServerModel:
 	# 全てのプレイヤー，弾の組み合わせについて衝突判定
 	def checkCollision(self):
 		for player in self.players.values():
-			#print(player)
+			print(player)
 			for bullet in self.bullets[:]: #[:]することでforループの中でremoveできる
 				# 自分で撃った弾にはあたらない
+#				print(bullet)
 				if player['id'] != bullet['id']:
 					if self.checkBalletPlayerCollision(player, bullet):
 						# 衝突処理
-						#print(f'Player{player["id"]} is damaged...')
 						player['point'] += BULLET_POINT
+						print(f'Player{player["id"]} is {player["point"]}damaged')
 						self.bullets.remove(bullet)
 						continue
 

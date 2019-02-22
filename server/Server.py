@@ -6,6 +6,7 @@ import threading
 import pickle
 from ServerModel import ServerModel
 from ServerView import ServerView
+from time import sleep
 
 class Server:
 	def __init__(self):
@@ -56,9 +57,8 @@ class Server:
 		return pickle.dumps(raw_data)
 
 	def update(self):
-		self.view.update()
-		# 1000/FPS_VIEW ミリ秒間隔で再実行
-		self.window.after(int(1000//VIEW_FPS), self.update)
+#		self.view.update()
+		self.model.checkCollision()
 
 	def handler(self, conn, addr):
 		while True:
@@ -109,7 +109,8 @@ class Server:
 
 					if msg == 'SendGameData':
 						modeldata = raw_data['data']
-						gamedata =  self.model.update(modeldata)
+						self.model.load_data(modeldata)
+						gamedata =  self.model.dump_data(modeldata)
 						#print(f'game{gamedata}')
 
 						# 各クライアントに送信
@@ -131,4 +132,13 @@ class Server:
 
 if __name__ == '__main__' :
 	server = Server()
-	server.openServer()
+	thread = threading.Thread(target=server.openServer, daemon=False)
+	thread.start()
+	
+	sleep_time = 1/600
+	while True:
+		server.update()
+		sleep(sleep_time)
+
+
+
