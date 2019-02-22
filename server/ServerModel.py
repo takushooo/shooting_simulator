@@ -34,7 +34,6 @@ class ServerModel:
 			self.players[f'player{player_id}']['point'] = player_data[3]
 			self.players[f'player{player_id}']['state'] = player_data[4]
 		else:
-			print(self.players)
 			self.players[f'player{player_id}']['id'] = player_data[0]
 			self.players[f'player{player_id}']['x'] = player_data[1]
 			self.players[f'player{player_id}']['y'] = player_data[2]
@@ -73,7 +72,6 @@ class ServerModel:
 	# 全てのプレイヤー，弾の組み合わせについて衝突判定
 	def checkCollision(self):
 		for player in self.players.values():
-			print(player)
 			for bullet in self.bullets[:]: #[:]することでforループの中でremoveできる
 				# 自分で撃った弾にはあたらない
 #				print(bullet)
@@ -81,7 +79,7 @@ class ServerModel:
 					if self.checkBalletPlayerCollision(player, bullet):
 						# 衝突処理
 						player['point'] += BULLET_POINT
-						print(f'Player{player["id"]} is {player["point"]}damaged')
+						print(f'Player {player["id"]} is {player["point"]} damaged')
 						self.bullets.remove(bullet)
 						continue
 
