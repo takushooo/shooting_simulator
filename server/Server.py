@@ -9,20 +9,14 @@ from ServerView import ServerView
 from time import sleep
 
 class Server:
-	def __init__(self):
+	def __init__(self, window):
+		self.window = window
 		self.host = '127.0.0.1'
 		self.port = 50007
 		self.clients = []
 		self.player = 1 # 0はサーバー，1以降がクライアント
 		self.server_id = 0
 		self.model = ServerModel()
-		# ウィンドウを作成
-#		self.window = tk.Tk()
-#		self.view = ServerView(self.window,self.model.players, self.model.bullets)
-#	
-#		thread = threading.Thread(target=self.update, daemon=True)
-#		thread.start()
-#		self.window.mainloop()
 
 	def openServer(self):
 		# AF = IPv4 という意味
@@ -57,7 +51,6 @@ class Server:
 		return pickle.dumps(raw_data)
 
 	def update(self):
-#		self.view.update()
 		self.model.checkCollision()
 
 	def handler(self, conn, addr):
@@ -131,14 +124,29 @@ class Server:
 
 
 if __name__ == '__main__' :
-	server = Server()
+
+	# ウィンドウを作成
+	window = tk.Tk()
+	server = Server(window)
+
 	thread = threading.Thread(target=server.openServer, daemon=False)
 	thread.start()
-	
-	sleep_time = 1/600
-	while True:
+
+	view = ServerView(window, server.model.players, server.model.bullets)
+	# 1000/FPS_VIEW ミリ秒間隔で再実行
+	def update():
 		server.update()
-		sleep(sleep_time)
+		view.update()
+		window.after(int(1000//VIEW_FPS), update)
+
+	update()
+	window.mainloop()
+
+
+#	sleep_time = 1/600
+#	while True:
+#		server.update()
+#		sleep(sleep_time)
 
 
 

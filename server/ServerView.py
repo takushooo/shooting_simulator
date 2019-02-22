@@ -6,7 +6,7 @@ class ServerView:
 		# ウィンドウの設定
 		self.window = window
 		self.window.resizable(width=False, height=False)
-		self.window.title('Shooting Simulator - Jkawe')
+		self.window.title('Shooting Simulator - Server')
 		self.window.geometry(f'{FIELD_WIDTH + LISTBOX_WIDTH}x{FIELD_HEIGHT}')
 		# 描画領域を作成
 		self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)

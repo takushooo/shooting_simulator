@@ -33,7 +33,7 @@ class Controller:
 	    self.data = {}
 	    self.init_data()
 	    # ビューの生成
-	    self.view = View(self.window, self.data)
+	    self.view = View(self.window, self.data, self.cm.id)
 	    # 最初の1回(update内で再帰的にupdateが呼ばれてループとなる)
 	    # モデルとビューは更新頻度(TickRate, FPS)が異なるので別々に呼ぶ
 	    self.update_model()

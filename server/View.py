@@ -2,11 +2,11 @@ import tkinter as tk
 from const import FIELD_HEIGHT, FIELD_WIDTH, PLAYER_SIZE, PLAYER_COLORS, BACKGROUND_COLOR, BULLET_SIZE, BULLET_COLORS, LISTBOX_WIDTH
 
 class View:
-	def __init__(self, window, data):
+	def __init__(self, window, data, player_id):
 		# ウィンドウの設定
 		self.window = window
 		self.window.resizable(width=False, height=False)
-		self.window.title('Shooting Simulator - Jkawe')
+		self.window.title(f'Shooting Simulator - Player {player_id}')
 		self.window.geometry(f'{FIELD_WIDTH + LISTBOX_WIDTH}x{FIELD_HEIGHT}')
 		# 描画領域を作成
 		self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)
