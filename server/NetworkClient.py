@@ -38,7 +38,7 @@ class NetworkClient():
             while True:
                 try:
                     # クライアントから送信されたメッセージを 1024 バイトずつ受信
-                    pickled_data = self.socket.recv(1024)
+                    pickled_data = self.socket.recv(4024)
                     raw_data = pickle.loads(pickled_data)
                     if raw_data['message'] == 'ResponseAttend':
                         self.player_id = int(raw_data['dst_id'])

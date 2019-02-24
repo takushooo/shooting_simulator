@@ -90,7 +90,8 @@ class Server:
 						y = 200
 						point = 0
 						state = 1
-						sendData['player'] = (player_id, x, y, point, state)
+						direction = 0
+						sendData['player'] = (player_id, x, y, point, state, direction)
 						send_data = self.createData('NewPlayerAttend', self.server_id, self.server_id, sendData)
 						# 新規プレイヤーの参加通知をブロードキャスト
 						for client in self.clients:
@@ -131,7 +132,7 @@ if __name__ == '__main__' :
 	#Override config setting in INI File
 	##############################
 	p = argparse.ArgumentParser()
-	p.add_argument('-v', '--view',default=False,action='store_true',help='ser GUI option')
+	p.add_argument('-v', '--view',default=False,action='store_true',help='Show server view')
 
 	config = {} #設定データは辞書で保持
 	args = p.parse_args()

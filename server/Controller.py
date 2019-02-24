@@ -53,18 +53,18 @@ class Controller:
 		self.data[f'player{self.cm.id}']['y'] = self.cm.y
 		self.data[f'player{self.cm.id}']['point'] = self.cm.point
 		self.data[f'player{self.cm.id}']['state'] = self.cm.state
-
+		self.data[f'player{self.cm.id}']['direction'] = self.cm.direction
 
 	def create_packet(self):
 		# プレイヤーと弾丸の情報をタプルにして送信する
 		# タプルの構成を変更した場合，Serverの初期値設定の項目も変更すること
 		sendData = {}
-		sendData['player'] = (self.cm.id, self.cm.x, self.cm.y, self.cm.point, self.cm.state)
+		sendData['player'] = (self.cm.id, self.cm.x, self.cm.y, self.cm.point, self.cm.state, self.cm.direction)
 
 		sendData['bullets_id'] = self.cm.id
 		sendData['bullets'] = []
 		for b in self.bm.bulletList:
-			bullet = (b.x, b.y, b.v, b.radian)
+			bullet = (b.x, b.y, b.v, b.direction)
 			sendData['bullets'].append(bullet)
 
 		
@@ -88,10 +88,12 @@ class Controller:
 				self.data[f'player{i}']['id'] = player_data[0]
 				self.data[f'player{i}']['point'] = player_data[3]
 				self.data[f'player{i}']['state'] = player_data[4]
+				self.data[f'player{i}']['direction'] = player_data[5]
 				# 自分の座標データはクライアントのものを用いるので更新しない（敵の情報だけ更新）
 				if i != self.cm.id:
 					self.data[f'player{i}']['x'] = player_data[1]
 					self.data[f'player{i}']['y'] = player_data[2]
+					self.data[f'player{i}']['direction'] = player_data[5]
 
 		for i in range(20):
 			# 弾丸も同様に設定
@@ -99,7 +101,7 @@ class Controller:
 				# 一旦消して再設定する
 				self.data[f'bullets{i}'] = []
 				for b in gamedata[f'bullets{i}']:
-					bullet = {'id': i, 'x': b[0],'y': b[1], 'v': b[2], 'radian': b[3]}
+					bullet = {'id': i, 'x': b[0],'y': b[1], 'v': b[2], 'direction': b[3]}
 					self.data[f'bullets{i}'].append(bullet)
 
 				self.cm.point = self.data[f'player{self.cm.id}']['point']
@@ -137,12 +139,13 @@ class Controller:
 		#self.data[f'player{self.cm.id}']['id'] = self.cm.id
 		self.data[f'player{self.cm.id}']['x'] = self.cm.x
 		self.data[f'player{self.cm.id}']['y'] = self.cm.y
+		self.data[f'player{self.cm.id}']['direction'] = self.cm.direction
 		#self.data[f'player{self.cm.id}']['point'] = self.cm.point
 		#self.data[f'player{self.cm.id}']['state'] = self.cm.state
 		# 弾も同様
 		self.data[f'bullets{self.cm.id}'] = []
 		for b in self.bm.bulletList:
-			bullet = {'id': self.cm.id, 'x':b.x ,'y': b.y, 'v': b.v, 'radian': b.radian}
+			bullet = {'id': self.cm.id, 'x':b.x ,'y': b.y, 'v': b.v, 'direction': b.direction}
 			self.data[f'bullets{self.cm.id}'].append(bullet)
 
 

@@ -29,3 +29,6 @@ CPU_MOVE = FPS * 0.5
 
 #リストボックスの高さはFIELD_HEIGHTと同じ
 LISTBOX_WIDTH = 200
+
+# imageファイルのパス
+BULLET_IMAGE_PATH = "../img/bullet.png"

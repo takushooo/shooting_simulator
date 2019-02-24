@@ -8,7 +8,7 @@ class ClientModel:
 	# プレイヤーの生成に必要な情報
 	# ID：プレイヤー固有のID，0から始まる．ホストやサーバーが決定する
 	# x,y：プレイヤーの初期位置
-	def __init__(self, window, keyinput, id, x, y, point, state):
+	def __init__(self, window, keyinput, id, x, y, point, state, direction):
 		self.window = window
 		self.id = id
 		self.x = x
@@ -16,22 +16,25 @@ class ClientModel:
 		self.keyinput = keyinput
 		self.point = point  # 得点
 		self.state = state # 状態
-
+		self.direction = direction
 		self.cooltime = 0
 
+	# return theta
+	def mouseDirection(self):
+		return math.atan2(self.keyinput.mouseY - self.y, self.keyinput.mouseX - self.x)
 
 	def update(self):
 		self.move()
 		self.shoot()
+		self.direction = self.mouseDirection()
 
 	def shoot(self):
 		if self.keyinput.pressTime[KEY_SHOT] > 0:
 			if self.cooltime > SHOOT_COOLTIME:
 				# マウスが向いている方向の角度を取得
-				arcx = self.keyinput.mouseX - self.x
-				arcy = self.keyinput.mouseY - self.y
-				theta = math.atan2(arcy, arcx)
+				theta = self.mouseDirection()
 				theta_count = int(theta/(2*math.pi/10000))
+
 				# <ShotBullet>のイベントを生成する，ユーザーID，発射方向を追加で載せる
 				# state,x,y,timeの本来の使いみちは違うが苦肉の策として使用する（誰かイベントハンドラ自作して）
 				# このイベントはBulletManagerで受理される		

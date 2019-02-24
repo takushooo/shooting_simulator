@@ -90,7 +90,7 @@ class AutoKeyInput:
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していて自分ではないなら
 			if f'player{i}' in self.gamedata and i != self.player_id :
-				player = gamedata[f'player{i}']
+				player = self.gamedata[f'player{i}']
 				tmp_dist = math.sqrt(math.pow((player['x'] - self.gamedata[f'player{self.player_id}']['x']),2)+math.pow((player['y'] - self.gamedata[f'player{self.player_id}']['y']),2))
 				dist[f'player{i}'] = tmp_dist
 		# もっとも近い敵をマウス座標とする

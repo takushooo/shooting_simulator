@@ -35,13 +35,15 @@ class ServerModel:
 			self.players[f'player{player_id}']['y'] = player_data[2]
 			self.players[f'player{player_id}']['point'] = player_data[3]
 			self.players[f'player{player_id}']['state'] = player_data[4]
+			self.players[f'player{player_id}']['direction'] = player_data[5]
 		else:
 			self.players[f'player{player_id}']['id'] = player_data[0]
 			self.players[f'player{player_id}']['x'] = player_data[1]
 			self.players[f'player{player_id}']['y'] = player_data[2]
+			self.players[f'player{player_id}']['direction'] = player_data[5]
 			# pointとstateはサーバーのものを使用する
 			# 普通のゲームでも同様だと思う．(本当はx.yもキー入力情報から求めたいが．．．)
-
+			#                                   ↑チックレートの同期を行えば可能
 
 
 		# 弾は該当するIDの弾を全て消してから再設定する
@@ -52,7 +54,7 @@ class ServerModel:
 				self.bullets.remove(b)
 				continue
 		for b in bullets_data:
-			bullet = {'id': player_id, 'x': b[0],'y': b[1], 'v': b[2], 'radian': b[3]}
+			bullet = {'id': player_id, 'x': b[0],'y': b[1], 'v': b[2], 'direction': b[3]}
 			self.bullets.append(bullet)
 
 	# loadの逆のことを行ってReturnする
@@ -60,13 +62,13 @@ class ServerModel:
 		player_id = data['bullets_id']
 		dump_data = {}
 		dump_data['player'] = (self.players[f'player{player_id}']['id'], self.players[f'player{player_id}']['x'], self.players[f'player{player_id}']['y'], 
-			self.players[f'player{player_id}']['point'], self.players[f'player{player_id}']['state'])
+			self.players[f'player{player_id}']['point'], self.players[f'player{player_id}']['state'], self.players[f'player{player_id}']['direction'])
 
 		dump_data['bullets_id'] = player_id
 		dump_data['bullets'] = []
 		for b in self.bullets:
 			if b['id'] == player_id:
-				bullet = (b['x'], b['y'], b['v'], b['radian'])
+				bullet = (b['x'], b['y'], b['v'], b['direction'])
 				dump_data['bullets'].append(bullet)
 		return dump_data
 
@@ -91,9 +93,9 @@ class ServerModel:
 	# 弾のワープに対応するため，1ピクセルづつ動かして検証する（もっと頭いい方法あるはず）
 	def checkBalletPlayerCollision(self, player, bullet):
 		for i in range(int(bullet['v'])):
-			#print(bullet['radian'])
-			tmpx = bullet['x']+ math.cos(bullet['radian']) * i
-			tmpy = bullet['y']+ math.sin(bullet['radian']) * i
+			#print(bullet['direction'])
+			tmpx = bullet['x']+ math.cos(bullet['direction']) * i
+			tmpy = bullet['y']+ math.sin(bullet['direction']) * i
 			dist = math.sqrt(math.pow(player['x'] - tmpx, 2) + math.pow(player['y'] - tmpy, 2))
 			if dist < (PLAYER_SIZE + BULLET_SIZE):
 				return True
