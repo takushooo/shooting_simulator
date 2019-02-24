@@ -17,22 +17,24 @@ from threading import Timer
 
 class Controller:
 	def __init__(self, config) :
+		# ゲーム内データの生成
 	    self.config = config
-		# ウィンドウを作成
+	    self.data = {}
+	    # ウィンドウオブジェクトを作成
 	    self.window = tk.Tk()
-	    # モデルインスタンス
+
+	    # 各インスタンスの生成
 	    self.nc = NetworkClient()
-	    print(self.nc.selfdata)
+	    print(f'[DEBUG] selfData: {self.nc.selfdata}')
 	    tmp_player_id = self.nc.player_id
 	    if self.config['manual']:
 	    	self.keyinput = KeyInput(self.window)
 	    else:
-	    	self.keyinput = AutoKeyInput(self.window, tmp_player_id)
+	    	# オートモード
+	    	self.keyinput = AutoKeyInput(self.window, tmp_player_id, self.data)
 	    # Neworkコントローラで設定された初期値を渡す(*でタプル展開)
 	    self.cm = ClientModel(self.window, self.keyinput, *(self.nc.selfdata))
 	    self.bm = BulletManager(self.window)
-	    # data: Viewクラスとの通信を行う情報パイプ
-	    self.data = {}
 	    self.init_data()
 	    # ビューの生成
 	    self.view = View(self.window, self.data, self.cm.id, self.config)
@@ -106,7 +108,7 @@ class Controller:
 
 	def update_model(self):
 		# アップデート順番は大事
-		self.keyinput.update(self.data)
+		self.keyinput.update()
 		self.cm.update()
 		self.bm.update()
 

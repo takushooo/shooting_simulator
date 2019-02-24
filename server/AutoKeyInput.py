@@ -8,7 +8,8 @@ import math
 
 class AutoKeyInput:
 	# ウィンドウオブジェクトにキー入力のイベントを設定
-	def __init__(self, window, player_id):
+	def __init__(self, window, player_id, gamedata):
+		self.gamedata = gamedata
 		self.window = window
 		self.keyList = [KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT]
 		self.pressStatus = {}
@@ -22,10 +23,33 @@ class AutoKeyInput:
 			self.pressStatus[key] = False
 			self.pressTime[key] = 0
 
+	def randomGaussWalk_short(self):
+		# ショットキーは常に押しっぱなし
+		self.pressStatus[KEY_SHOT] = True
+		# 移動タイマーが0未満なら移動方向を変える
+		if self.moveTimer < 0 :
+			#一旦入力をOFFに
+			for key in self.keyList:
+				self.pressStatus[key] = False
 
-			
+			#方向を8方向からランダムで決定
+			while True:
+				# 0-3の乱数を生成
+				direct1 = random.randrange(0,4)
+				direct2 = random.randrange(0,4)
+				if direct1 != direct2:
+					self.pressStatus[self.keyList[direct1]] = True
+					self.pressStatus[self.keyList[direct2]] = True
+					break
+			#移動時間を決定
+			#平均CPU_MOVE，標準偏差CPU_MOVE/5のガウス分布に従う
+			self.moveTimer = int(random.gauss(CPU_MOVE, CPU_MOVE/5))
+		
+		else:
+			#moveTimerがまだ残っているならデクリメント
+			self.moveTimer -= 1
 
-	def auto(self):
+	def randomGaussWalk(self):
 		# ショットキーは常に押しっぱなし
 		self.pressStatus[KEY_SHOT] = True
 		# 移動タイマーが0未満なら移動方向を変える
@@ -55,28 +79,31 @@ class AutoKeyInput:
 			self.moveTimer = int(random.gauss(CPU_MOVE, CPU_MOVE/5))
 		
 		else:
-			#moveTimerがまだ残っているなら
+			#moveTimerがまだ残っているならデクリメント
 			self.moveTimer -= 1
 
-	# アップデート関数，メインループ内で呼び出し必須
-	def update(self, gamedata=None):
-		self.auto()
-		
+
+	def centerShoot(self):
 		# マウスはもっとも近い敵の座標にする
 		dist = {}
 		# 自分以外のプレイヤーとの距離を計算してリスト化
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していて自分ではないなら
-			if f'player{i}' in gamedata and i != self.player_id :
+			if f'player{i}' in self.gamedata and i != self.player_id :
 				player = gamedata[f'player{i}']
-				tmp_dist = math.sqrt(math.pow((player['x'] - gamedata[f'player{self.player_id}']['x']),2)+math.pow((player['y'] - gamedata[f'player{self.player_id}']['y']),2))
+				tmp_dist = math.sqrt(math.pow((player['x'] - self.gamedata[f'player{self.player_id}']['x']),2)+math.pow((player['y'] - self.gamedata[f'player{self.player_id}']['y']),2))
 				dist[f'player{i}'] = tmp_dist
 		# もっとも近い敵をマウス座標とする
 		if len(dist) > 0:
 			key = max(dist.items(), key=lambda x:x[1])[0]
-			self.mouseX = gamedata[key]['x']
-			self.mouseY = gamedata[key]['y']
+			self.mouseX = self.gamedata[key]['x']
+			self.mouseY = self.gamedata[key]['y']
 
+
+	# アップデート関数，メインループ内で呼び出し必須
+	def update(self):
+		self.randomGaussWalk_short()
+		self.centerShoot()
 		for key in self.keyList:
 			if self.pressStatus[key] == True: 
 				self.pressTime[key] += 1

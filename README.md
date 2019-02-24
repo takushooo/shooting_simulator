@@ -5,14 +5,14 @@
 # 遊び方
 ## サーバー・クライアント方式
 1. serverフォルダ内のServer.pyをサーバー機で実行する
-2. serverフォルダ内のmain.pyをクライアント機で実行する．
+2. serverフォルダ内のClient.pyをクライアント機で実行する．
 
 ## P2P方式
 今後実装予定
 
 
 # 実行オプション
-## main.py
+## Client.py
 - -h, -help: コマンドオプションの表示
 - -dd [DELAYTIME], -downlinkdelay [DELAYTIME]: 下り回線の遅延(ミ秒指定)
 - -ud [DELAYTIME], -uplinkdelay [DELAYTIME]: 上り回線の遅延(ミリ秒指定)

@@ -42,7 +42,7 @@ class KeyInput:
 		self.pressStatus[event.keysym] = False
 		
 	# アップデート関数，メインループ内で呼び出し必須
-	def update(self,gamedata=None):
+	def update(self):
 		for key in self.keyList:
 			if self.pressStatus[key] == True: 
 				self.pressTime[key] += 1
