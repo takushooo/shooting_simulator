@@ -61,9 +61,11 @@ class View:
 	def message_update(self):
 		textlist = []
 		textlist.append(f'You are Player {self.player_id}({PLAYER_COLORS[self.player_id]})')
+		textlist.append("------------------------")
 		textlist.append(f'Uplink Delay:\t{self.config["uplinkdelay"]} (ms)')
 		textlist.append(f'Downlink Delay:\t{self.config["downlinkdelay"]} (ms)')
-		textlist.append("--------------------")		
+		textlist.append(f'Manual Mode:\t{self.config["manual"]}')
+		textlist.append("------------------------")		
 		textlist.append("Name\t\tDamage")
 		for i in range(20):
 			# gamedataのキーにplayer{i}が存在していたら
