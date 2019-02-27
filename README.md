@@ -70,3 +70,5 @@ AutoKeyInput.pyを編集することで制御可能
 ### centerShoot()
 - その時点の敵の位置 (遅延に影響される情報)を常に射撃
 
+### linerEstimation()
+- 線形予測して射撃
