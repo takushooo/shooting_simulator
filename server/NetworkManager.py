@@ -5,6 +5,7 @@ import threading
 from const import MAX_USER
 from time import sleep
 from Event import Event
+import random
 
 class NetworkManager():
 
@@ -24,6 +25,7 @@ class NetworkManager():
 		self.port = port
 		self.connection_list = [] #辞書 (接続判定，コネクション，アドレス)
 		self.receive_data_que = []
+		self.disconnect_now = []
 		self.server_info = {'empty':False, 'short_address': 0 ,'connection': None, 'ip_address': None}
 		self.my_short_address = -1
 
@@ -46,12 +48,13 @@ class NetworkManager():
 		elif dst == self.DST_SERVER:
 			self.server_info['connection'].send(pickled_data)
 		elif dst != self.my_short_address:
-			conn = [x['connection'] for x in list if x['short_address'] == 'dst']
-#			addr = [x['ip_address'] for x in list if x['short_address'] == 'dst']
-			conn.send(pickled_data)
+			conns = [x['connection'] for x in self.connection_list if x['short_address'] == dst]
+			conn = conns[0] if len(conns) else ''
+			if conn != '':
+				conn.send(pickled_data)
 
 
-	def receive_data():
+	def receive_data(self):
 		ret =  self.receive_data_que.copy()
 		self.receive_data_que.clear()
 		return ret
@@ -90,7 +93,7 @@ class NetworkManager():
 					c['empty'] = False
 					client_info = c
 					break
-			print(client_info['connection'])
+			print(client_info['connection']) 
 			# 受信処理を行うスレッド作成
 			thread = threading.Thread(target=self.server_recieve_thread, args=(client_info,), daemon=True)
 			thread.start()
@@ -103,10 +106,12 @@ class NetworkManager():
 			if not c['empty'] and c['short_address'] != self.my_short_address:
 				self.disconnect_client(c)
 
+
 	def server_disconnect_client(self, client_info):
 		print(f'[Disconnect]{client_info["ip_address"]}')
 		client_info['connection'].close()
 		client_info['empty'] = True
+		self.disconnect_now.append(client_info['short_address'])
 
 
 	def client_open(self):
@@ -119,13 +124,14 @@ class NetworkManager():
 			self.server_info['connection'] = s
 			print('Connected')
 			# 受信処理を行うスレッド作成
-			thread = threading.Thread(target=self.client_recive_thread, daemon=True)
+			thread = threading.Thread(target=self.client_recieve_thread, daemon=True)
 			thread.start()
 		except ConnectionRefusedError:
 			# 接続先のソケットサーバが立ち上がっていない場合、
 			# 接続拒否になることが多い
 			print('Connecting request is rejected')
 			# P2Pなら自分が基準器(ホスト)になる処理
+
 
 	def server_recieve_thread(self, client_info):
 		short_addr = client_info['short_address']
@@ -146,19 +152,31 @@ class NetworkManager():
 				break
 			else:
 				raw_data = Event.unpickle(pickled_data)
-				self.receive_data_que.append(raw_data)
-				
+				if raw_data['msg'] == Event.CLIENT_REQUEST_SHORT_ADDRESS:
+					self.transmit_data(client_info['short_address'], Event.SERVER_SEND_SHORT_ADDRESS, raw_data['payload'])
+				elif raw_data['dst'] == self.DST_SERVER:
+					self.receive_data_que.append(raw_data)
 
 
-	def client_recive_thread(self):
+	def client_recieve_thread(self):
 		client_socket = self.server_info['connection']
+		random_hash = random.randrange(10000)
+		self.transmit_data(self.DST_SERVER, Event.CLIENT_REQUEST_SHORT_ADDRESS, random_hash)
+		while True:
+			# サーバーからから送信されたメッセージを 1024 バイトずつ受信
+			pickled_data = client_socket.recv(10240)
+			raw_data = Event.unpickle(pickled_data)
+			if raw_data['msg'] == Event.SERVER_SEND_SHORT_ADDRESS and raw_data['payload'] == random_hash:
+				self.my_short_address = raw_data['dst']
+				break
+
 		while True:
 			try:
 				# サーバーからから送信されたメッセージを 1024 バイトずつ受信
 				pickled_data = client_socket.recv(10240)
-				print(pickled_data)
 				raw_data = Event.unpickle(pickled_data)
-				self.receive_data_que.append(raw_data)
+				if raw_data['dst'] == self.my_short_address:
+					self.receive_data_que.append(raw_data)
 
 			except ConnectionRefusedError:
 				print('ConnectionRefusedError')

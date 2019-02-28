@@ -1,9 +1,9 @@
 # coding:utf-8
 
 import tkinter as tk
-from const import FIELD_HEIGHT, FIELD_WIDTH, PLAYER_SIZE, PLAYER_COLORS, BACKGROUND_COLOR, BULLET_SIZE, BULLET_COLORS, LISTBOX_WIDTH
+from const import FIELD_HEIGHT, FIELD_WIDTH, PLAYER_SIZE, PLAYER_COLORS, BACKGROUND_COLOR, BULLET_SIZE_NOMAL, BULLET_COLORS, LISTBOX_WIDTH
 
-class View:
+class ClientView:
 	def __init__(self, window, data, player_id, config):
 		# ウィンドウの設定
 		self.window = window
@@ -13,10 +13,11 @@ class View:
 		
 		self.window.resizable(width=False, height=False)
 		self.window.title(f'Shooting Simulator - Player {player_id}')
-		self.window.geometry(f'{FIELD_WIDTH + LISTBOX_WIDTH}x{FIELD_HEIGHT}')
+#		self.window.geometry(f'{FIELD_WIDTH + LISTBOX_WIDTH}x{FIELD_HEIGHT}')
+		self.window.geometry('200x200')
 		# 描画領域を作成
 		self.canvas = tk.Canvas(self.window, width=FIELD_WIDTH, height=FIELD_HEIGHT)
-		self.canvas.create_rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT, fill=BACKGROUND_COLOR)
+#		self.canvas.create_rectangle(0, 0, FIELD_WIDTH, FIELD_HEIGHT, fill=BACKGROUND_COLOR)
 		self.canvas.pack(side=tk.LEFT)
 		# メッセージビュアーの設定
 		self.player_log = tk.StringVar()
@@ -56,7 +57,7 @@ class View:
 			# gamedataのキーにplayer{i}が存在していたら
 			if f'bullets{i}' in self.data:
 				for b in self.data[f'bullets{i}']:
-					self.canvas.create_oval(b['x']-BULLET_SIZE//2, b['y']-BULLET_SIZE//2, b['x']+BULLET_SIZE//2, b['y']+BULLET_SIZE//2 ,fill=BULLET_COLORS[b["id"]])
+					self.canvas.create_oval(b['x']-BULLET_SIZE_NOMAL//2, b['y']-BULLET_SIZE_NOMAL//2, b['x']+BULLET_SIZE_NOMAL//2, b['y']+BULLET_SIZE_NOMAL//2 ,fill=BULLET_COLORS[b["id"]])
 
 	def message_update(self):
 		textlist = []

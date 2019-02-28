@@ -1,18 +1,36 @@
 # coding:utf-8
 
-import tkinter as tk
 import math
-import KeyInput
-from const import PLAYER_SIZE, BULLET_SIZE, BULLET_POINT
+from Player import Player
+from const import *
+
 
 
 class ServerModel:
-	# プレイヤーの生成に必要な情報
-	# ID：プレイヤー固有のID，0から始まる．ホストやサーバーが決定する
-	# x,y：プレイヤーの初期位置
+
 	def __init__(self):
-		self.players = {}
-		self.bullets = []
+		self.entire_data = {'players':[], 'bullets':[]}
+
+
+	def set_init_data(self, new_player_data):
+		self.entire_data['players'].append(new_player_data)
+
+	def delete_player(self, player_id):
+		players = [x for x in self.entire_data['players'] if x.player_id == player_id]
+		player = players[0] if len(players) else ''
+		if player != '':
+			self.entire_data['players'].remove(player)
+
+	def update_entire_data(self, received_data):
+		players = [x for x in self.entire_data['players'] if x.player_id == received_data['player_id']]
+		player = players[0] if len(players) else ''
+		if player != '':
+			player.update(received_data)
+		else:
+			print("[LOG] Invalid Player ID")
+			exit()
+
+
 
 
 #	def update(self, gamedata):
@@ -21,57 +39,8 @@ class ServerModel:
 #		return self.dump_data(gamedata)
 
 
-	# raw_dataを打ち込むとモデルに格納する関数
-	def load_data(self, data):
-		player_data = data['player']
-		bullets_data = data['bullets']
-		player_id = data['bullets_id']
 
-		# IDがリストになければ新規登録プレイヤー
-		if f'player{player_id}' not in self.players.keys():
-			self.players[f'player{player_id}'] = {}
-			self.players[f'player{player_id}']['id'] = player_data[0]
-			self.players[f'player{player_id}']['x'] = player_data[1]
-			self.players[f'player{player_id}']['y'] = player_data[2]
-			self.players[f'player{player_id}']['point'] = player_data[3]
-			self.players[f'player{player_id}']['state'] = player_data[4]
-			self.players[f'player{player_id}']['direction'] = player_data[5]
-		else:
-			self.players[f'player{player_id}']['id'] = player_data[0]
-			self.players[f'player{player_id}']['x'] = player_data[1]
-			self.players[f'player{player_id}']['y'] = player_data[2]
-			self.players[f'player{player_id}']['direction'] = player_data[5]
-			# pointとstateはサーバーのものを使用する
-			# 普通のゲームでも同様だと思う．(本当はx.yもキー入力情報から求めたいが．．．)
-			#                                   ↑チックレートの同期を行えば可能
-
-
-		# 弾は該当するIDの弾を全て消してから再設定する
-		# 弾はプレイやーと異なり，クライアント毎にラベルはつけない
-		# bullet[:]とするとforループの中でremoveできる
-		for b in self.bullets[:]:
-			if b['id'] == player_id:
-				self.bullets.remove(b)
-				continue
-		for b in bullets_data:
-			bullet = {'id': player_id, 'x': b[0],'y': b[1], 'v': b[2], 'direction': b[3]}
-			self.bullets.append(bullet)
-
-	# loadの逆のことを行ってReturnする
-	def dump_data(self,data):
-		player_id = data['bullets_id']
-		dump_data = {}
-		dump_data['player'] = (self.players[f'player{player_id}']['id'], self.players[f'player{player_id}']['x'], self.players[f'player{player_id}']['y'], 
-			self.players[f'player{player_id}']['point'], self.players[f'player{player_id}']['state'], self.players[f'player{player_id}']['direction'])
-
-		dump_data['bullets_id'] = player_id
-		dump_data['bullets'] = []
-		for b in self.bullets:
-			if b['id'] == player_id:
-				bullet = (b['x'], b['y'], b['v'], b['direction'])
-				dump_data['bullets'].append(bullet)
-		return dump_data
-
+'''
 	# 全てのプレイヤー，弾の組み合わせについて衝突判定
 	def checkCollision(self):
 		for player in self.players.values():
@@ -100,7 +69,7 @@ class ServerModel:
 			if dist < (PLAYER_SIZE + BULLET_SIZE):
 				return True
 		return False
-
+'''
 
 if __name__ == '__main__' :
 	model = ServerModel()

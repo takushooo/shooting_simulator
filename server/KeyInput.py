@@ -1,7 +1,7 @@
 # coding:utf-8
 
 import tkinter as tk
-from const import KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT
+from const import *
 
 # 使い方
 # ウィンドウオブジェクト(tkinter.Tk()で取得)を与えてインスタンス化
@@ -11,7 +11,7 @@ class KeyInput:
 	# ウィンドウオブジェクトにキー入力のイベントを設定
 	def __init__(self, window):
 		self.window = window
-		self.keyList = [KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT]
+		self.keyList = [KEY_UP, KEY_DOWN, KEY_RIGHT, KEY_LEFT, KEY_SHOT, KEY_RUN, KEY_SNEAK]
 		self.pressStatus = {}
 		self.pressTime = {}
 		self.mouseX = 0

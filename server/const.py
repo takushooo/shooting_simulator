@@ -2,36 +2,41 @@
 BASE_FPS = 30 # BASE_FPSを基準として移動体の速度を変化させる
 FPS = 60
 VIEW_FPS = 60
-FIELD_HEIGHT = 300
-FIELD_WIDTH = 300
+FIELD_HEIGHT = 1000
+FIELD_WIDTH = 1000
 MAX_USER = 9
+BACKGROUND_COLOR = 'black'
 
 KEY_UP = 'w'
 KEY_DOWN = 's'
 KEY_RIGHT = 'd'
 KEY_LEFT = 'a'
 KEY_SHOT = 'space'
+KEY_RUN = 'Shift_L'
+KEY_SNEAK = 'Control_L'
 KEY_BOMB = 'b'
 KEY_GRANADE = 'g'
 KEY_SMAKE = 't'
 KEY_LOOK_RIGHT = 'k'
 KEY_LOOK_LEFT = 'j'
 
-
+# プレイヤー情報
 PLAYER_SIZE = 20
-# IDゼロ版はサーバーなので空にしておく
-PLAYER_COLORS = ['', 'Red', 'Cyan', 'Lime', 'White', 'Coral', 'Gold', 'Thistle', 'Azure', 'Orange']
-BACKGROUND_COLOR = 'black'
-# 30 FPSを基本として1フレームあたりの速度を調整 
-PLAYER_VELOCITY = 8 * (BASE_FPS/FPS) 
+PLAYER_COLORS = ['', 'Red', 'Cyan', 'Lime', 'White', 'Coral', 'Gold', 'Thistle', 'Azure', 'Orange'] # IDゼロ版はサーバーなので空にしておく
+PLAYER_VELOCITY_RUN = 16 * (BASE_FPS/FPS)  # 30 FPSを基本として1フレームあたりの速度を調整 
+PLAYER_VELOCITY_WALK = 8 * (BASE_FPS/FPS)
+PLAYER_VELOCITY_SNEAK = 4 * (BASE_FPS/FPS)
+PLAYER_MAX_HEALTH = 100
+PLAYER_MAX_STAMINA = 100
+
+
 
 BULLET_COLORS = ['', 'Red', 'Cyan', 'Lime', 'White', 'Coral', 'Gold', 'Thistle', 'Azure', 'Orange']
-BULLET_LIFE_NOMAL = FPS * 30 #bullet の生存時間
 
-BULLET_VELOCITY_NOMAL = 50 * (BASE_FPS/FPS)
-BULLET_VELOCITY_BOMB = 16 * (BASE_FPS/FPS)
-BULLET_VELOCITY_GRANADE = 25 * (BASE_FPS/FPS)
-BULLET_VELOCITY_SMOKE = 25 * (BASE_FPS/FPS)
+BULLET_VELOCITY_NOMAL = 30 * (BASE_FPS/FPS)
+BULLET_VELOCITY_BOMB = 10 * (BASE_FPS/FPS)
+BULLET_VELOCITY_GRANADE = 20 * (BASE_FPS/FPS)
+BULLET_VELOCITY_SMOKE = 20 * (BASE_FPS/FPS)
 
 BULLET_LIFE_NOMAL = FPS * 5 # 通常のショットが消えるまでの時間
 BULLET_LIFE_BOMB = FPS * 2 # ボムが消えるまでの時間

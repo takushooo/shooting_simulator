@@ -40,7 +40,7 @@ class ClientModel:
 		self.point = point  # 得点
 		self.state = state # 状態
 		self.direction = direction
-		self.cooltime = 0
+		self.count = 0
 
 	# return theta
 	def mouseDirection(self):
