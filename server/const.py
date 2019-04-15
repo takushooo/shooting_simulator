@@ -18,8 +18,8 @@ BACKGROUND_COLOR = 'black'
 # 30 FPSを基本として1フレームあたりの速度を調整 
 PLAYER_VELOCITY = 8 * (BASE_FPS/FPS) 
 # ショットの間隔フレーム = FPS/1秒あたりのショットの連射数
-SHOOT_COOLTIME = (FPS/10)  
-BULLET_VELOCITY = 80 * (BASE_FPS/FPS) 
+SHOOT_COOLTIME = (FPS/2)  
+BULLET_VELOCITY = 8 * (BASE_FPS/FPS) 
 BULLET_POINT = 1
 BULLET_SIZE = 6
 BULLET_COLORS = ['', 'Red', 'Cyan', 'Lime', 'White', 'Coral', 'Gold', 'Thistle', 'Azure', 'Orange']
